@@ -30,7 +30,7 @@ public class Aetheric implements ModInitializer {
 															matrixStack, frustumMatrix, projectionMatrix, i,
 															renderTickCounter, camera, frustum) -> {
 			if (stage == VeilRenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
-				ModRenderer.renderHallucinations(levelRenderer, bufferSource, matrixStack, frustumMatrix, projectionMatrix);
+				ModRenderer.renderHallucinations(levelRenderer, bufferSource, matrixStack, frustumMatrix, projectionMatrix, camera);
 			}
 		}));
 	}
