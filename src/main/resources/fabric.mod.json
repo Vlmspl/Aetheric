@@ -1,0 +1,37 @@
+{
+	"schemaVersion": 1,
+	"id": "aetheric",
+	"version": "${version}",
+	"name": "Aetheric",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/aetheric/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.vladitandlplayer.aetheric.Aetheric"
+		],
+		"fabric-datagen": [
+			"net.vladitandlplayer.aetheric.AethericDataGenerator"
+		]
+	},
+	"mixins": [
+		"aetheric.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.10",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
