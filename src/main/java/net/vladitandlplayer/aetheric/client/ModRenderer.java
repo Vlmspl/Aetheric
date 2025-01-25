@@ -12,21 +12,22 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.VertexBuffer;
+import net.minecraft.client.render.BuiltBuffer;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.NativeImage;
+import net.minecraft.client.util.BufferAllocator;
 import net.minecraft.client.util.Window;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.vladitandlplayer.aetheric.Aetheric;
-import org.joml.Matrix4f;
-import org.joml.Matrix4fc;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
+import org.joml.*;
 
 import java.io.IOException;
+import java.lang.Math;
 
 import static net.minecraft.client.session.telemetry.TelemetryEventProperty.RENDER_DISTANCE;
 import static org.lwjgl.opengl.GL11C.*;
@@ -49,6 +50,7 @@ public class ModRenderer {
             return;
         }
 
+
         // Get camera position
         double cameraX = MinecraftClient.getInstance().getCameraEntity().getX();
         double cameraY = MinecraftClient.getInstance().getCameraEntity().getY();
@@ -64,26 +66,25 @@ public class ModRenderer {
         // Hallucination texture
         HallucinationTexture hallucinationTexture = TEXTURES.computeIfAbsent(0, unused -> new HallucinationTexture());
 
-        // Calculate projection matrix
-        Window window = MinecraftClient.getInstance().getWindow();
-        float aspect = (float) window.getWidth() / window.getHeight();
-        float fov = projectionMatrix.perspectiveFov();
-        RENDER_PROJECTION.setPerspective(fov, aspect, 0.3F, RENDER_DISTANCE * 4);
 
-        // Calculate view matrix
-        Vector3f cameraDir = camera.();
-        Vector3f cameraUp = camera.getUpVector();
-        Matrix4f viewMatrix = new Matrix4f().identity().lookAlong(cameraDir, cameraUp);
 
-        // Optional: Add offset or distortions for hallucination effects
-        Vector3f hallucinationOffset = new Vector3f(
-                (float) (cameraX + Math.random() * 0.5),
-                (float) (cameraY + Math.random() * 0.5),
-                (float) (cameraZ + Math.random() * 0.5)
-        );
+        Quaternionf cameraRot = camera.getRotation();
+        Matrix4f viewMatrix = new Matrix4f();
+        viewMatrix.translate((float) -cameraX, (float) -cameraY, (float) -cameraZ); // Translate to camera position
+        viewMatrix.rotate(cameraRot); // Apply camera rotation
+
+        float[] vertices = {
+                -1.0f, -1.0f, 0.0f,
+                1.0f, -1.0f, 0.0f,
+                0.0f, 1.0f, 0.0f
+        };
+
+
+
+
 
         // Render hallucinations with modified matrices and offset
-        VeilLevelPerspectiveRenderer.render(fbo, RENDER_MODEL_VIEW, RENDER_PROJECTION, hallucinationOffset, viewMatrix, RENDER_DISTANCE, deltaTracker);
+
     }
 
 
