@@ -7,16 +7,15 @@ import foundry.veil.api.client.render.VeilLevelPerspectiveRenderer;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.api.client.render.framebuffer.FramebufferManager;
+import foundry.veil.api.client.render.vertex.VertexArray;
+import foundry.veil.api.client.render.vertex.VertexArrayBuilder;
 import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.VertexBuffer;
-import net.minecraft.client.render.BuiltBuffer;
-import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.WorldRenderer;
+import net.minecraft.client.render.*;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.BufferAllocator;
@@ -28,9 +27,13 @@ import org.joml.*;
 
 import java.io.IOException;
 import java.lang.Math;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 
 import static net.minecraft.client.session.telemetry.TelemetryEventProperty.RENDER_DISTANCE;
 import static org.lwjgl.opengl.GL11C.*;
+import static org.lwjgl.opengl.GL15C.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL30C.glGenVertexArrays;
 import static org.lwjgl.opengl.GL30C.glGenerateMipmap;
 
 @Environment(EnvType.CLIENT)
@@ -41,7 +44,6 @@ public class ModRenderer {
     private static final Matrix4f RENDER_PROJECTION = new Matrix4f();
     private static final Quaternionf VIEW = new Quaternionf();
 
-    private static final Long2ObjectMap<HallucinationTexture> TEXTURES = new Long2ObjectArrayMap<>();
 
 
     public static void renderHallucinations(WorldRenderer levelRenderer, VertexConsumerProvider.Immediate bufferSource,
@@ -63,9 +65,6 @@ public class ModRenderer {
             return;
         }
 
-        // Hallucination texture
-        HallucinationTexture hallucinationTexture = TEXTURES.computeIfAbsent(0, unused -> new HallucinationTexture());
-
 
 
         Quaternionf cameraRot = camera.getRotation();
@@ -73,60 +72,50 @@ public class ModRenderer {
         viewMatrix.translate((float) -cameraX, (float) -cameraY, (float) -cameraZ); // Translate to camera position
         viewMatrix.rotate(cameraRot); // Apply camera rotation
 
-        float[] vertices = {
+        float[] vertices = new float[] {
                 -1.0f, -1.0f, 0.0f,
                 1.0f, -1.0f, 0.0f,
                 0.0f, 1.0f, 0.0f
         };
+        int vertexCount = 3; // Number of vertices (for a triangle, 3 vertices)
+        int vertexSize = 3 * Float.BYTES; // 3 floats per vertex (x, y, z)
+
+
+        int[] indexes = new int[] {
+                0, 1, 2
+        };
+        int indexCount = 3;
+        int indexSize = Integer.BYTES;
+
+
+        VertexFormat vertexFormat = VertexFormat.builder().add("position", VertexFormatElement.POSITION).build();
 
 
 
+        int bufferSize = vertexCount * vertexSize;
+        int indexBufferSize = indexCount * indexSize;
+        BufferAllocator bufferAllocator = new BufferAllocator(bufferSize);
 
 
-        // Render hallucinations with modified matrices and offset
+        BufferAllocator.CloseableBuffer buffer = bufferAllocator.getAllocated();
 
+
+
+        BuiltBuffer.DrawParameters drawParameters = new BuiltBuffer.DrawParameters(vertexFormat, 0, bufferSize, VertexFormat.DrawMode.TRIANGLES, VertexFormat.IndexType.INT);
+
+        fbo.bind(true);
+        VertexArray vertexArray = VertexArray.create();
+        vertexArray.bind();
+        vertexArray.upload(new BuiltBuffer(buffer, drawParameters), VertexArray.DrawUsage.DYNAMIC);
+        vertexArray.uploadIndexBuffer(drawParameters);
+
+
+        vertexArray.draw(GL_STATIC_DRAW);
+
+        VertexArray.unbind();
+        AdvancedFbo.unbind();
     }
 
 
 
-    private static class HallucinationTexture extends AbstractTexture {
-        private boolean rendered;
-
-        private int width;
-        private int height;
-
-        private HallucinationTexture() {
-            this.setFilter(false, true);
-            this.width = -1;
-            this.height = -1;
-        }
-
-        @Override
-        public void load(ResourceManager manager) throws IOException {}
-
-        public void copy(AdvancedFbo fbo) {
-            int id = this.getGlId();
-            int width = fbo.getWidth();
-            int height = fbo.getHeight();
-            if (this.width!=width || this.height!=height) {
-                this.width = width;
-                this.height = height;
-                TextureUtil.prepareImage(NativeImage.InternalFormat.RGBA, id, 4, width, height);
-            }
-
-            RenderSystem.bindTexture(id);
-            fbo.bindRead();
-            glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, width, height);
-            AdvancedFbo.unbind();
-            glGenerateMipmap(GL_TEXTURE_2D);
-        }
-
-        public boolean hasRendered() {
-            return this.rendered;
-        }
-
-        public void setRendered(boolean val) {
-            this.rendered = val;
-        }
-    }
 }
