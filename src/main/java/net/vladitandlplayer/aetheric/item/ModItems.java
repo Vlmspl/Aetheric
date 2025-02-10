@@ -1,16 +1,17 @@
 package net.vladitandlplayer.aetheric.item;
 
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.vladitandlplayer.aetheric.Aetheric;
 
 public class ModItems {
 
-    private static Item registerItem(String name, Item item) {
-        return Registry.register(Registries.ITEM, Identifier.of(Aetheric.MOD_ID, name), item);
-    }
+//    private static Item registerItem(String name, Item item) {
+//        return Registry.register()
+//    }
 
     public static void registerModItems() {
         //to invoke the class

@@ -1,10 +1,11 @@
 package net.vladitandlplayer.aetheric;
 
+import foundry.veil.api.client.render.vertex.VertexArray;
 import foundry.veil.api.event.VeilRenderLevelStageEvent;
 import foundry.veil.platform.VeilEventPlatform;
 import net.fabricmc.api.ModInitializer;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.vladitandlplayer.aetheric.client.ModRenderer;
 import net.vladitandlplayer.aetheric.item.ModItems;
 import org.slf4j.Logger;
@@ -18,13 +19,14 @@ public class Aetheric implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	public static Identifier path(String path) {
-		return Identifier.of(MOD_ID, path);
+	public static ResourceLocation path(String path) {
+		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
 	}
 
 	@Override
 	public void onInitialize() {
 		ModItems.registerModItems();
+
 
 		VeilEventPlatform.INSTANCE.onVeilRenderLevelStage(((stage, levelRenderer, bufferSource,
 															matrixStack, frustumMatrix, projectionMatrix, i,
