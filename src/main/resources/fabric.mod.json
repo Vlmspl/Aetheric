@@ -3,9 +3,9 @@
 	"id": "aetheric",
 	"version": "${version}",
 	"name": "Aetheric",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "",
 	"authors": [
-		"Me!"
+		"VladITandLPlayer"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
@@ -17,6 +17,9 @@
 	"entrypoints": {
 		"main": [
 			"net.vladitandlplayer.aetheric.Aetheric"
+		],
+		"client": [
+			"net.vladitandlplayer.aetheric.AethericClient"
 		],
 		"fabric-datagen": [
 			"net.vladitandlplayer.aetheric.AethericDataGenerator"

@@ -23,17 +23,11 @@ public class Aetheric implements ModInitializer {
 		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
 	}
 
+
 	@Override
 	public void onInitialize() {
 		ModItems.registerModItems();
-
-
-		VeilEventPlatform.INSTANCE.onVeilRenderLevelStage(((stage, levelRenderer, bufferSource,
-															matrixStack, frustumMatrix, projectionMatrix, i,
-															renderTickCounter, camera, frustum) -> {
-			if (stage == VeilRenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
-				ModRenderer.renderHallucinations(levelRenderer, bufferSource, matrixStack, frustumMatrix, projectionMatrix, camera);
-			}
-		}));
 	}
+
+
 }
