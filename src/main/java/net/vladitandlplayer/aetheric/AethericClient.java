@@ -11,7 +11,6 @@ public class AethericClient implements ClientModInitializer {
         VeilEventPlatform.INSTANCE.onVeilRenderLevelStage(((stage, levelRenderer, bufferSource,
                                                             matrixStack, frustumMatrix, projectionMatrix, i,
                                                             renderTickCounter, camera, frustum) -> {
-            Aetheric.LOGGER.debug("Rendering stage: {}", stage);
 
             if (stage == VeilRenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
                 ModRenderer.renderHallucinations(levelRenderer, bufferSource, matrixStack, frustumMatrix, projectionMatrix, camera);

@@ -28,7 +28,7 @@ import static org.lwjgl.opengl.GL11C.*;
 @Environment(EnvType.CLIENT)
 public class ModRenderer {
     private static final ResourceLocation HALLUCINATION_FBO = Aetheric.path("hallucination");
-    private static final ResourceLocation HALLUCINATIONS_SHADER = Veil.veilPath("hallucinations");
+    private static final ResourceLocation HALLUCINATIONS_SHADER = Aetheric.path("hallucinations");
     private static VertexArray hallucinationsArray;
 
     public static void renderHallucinations(LevelRenderer levelRenderer,
@@ -37,9 +37,8 @@ public class ModRenderer {
                                             Matrix4fc frustumMatrix,
                                             Matrix4fc projectionMatrix,
                                             Camera camera) {
-        Aetheric.LOGGER.debug("the function has been called");
         if (VeilLevelPerspectiveRenderer.isRenderingPerspective() || !projectionMatrix.isFinite()) {
-            Aetheric.LOGGER.debug("not rendering perspective");
+            Aetheric.LOGGER.info("not rendering perspective or projection is infinite");
             return;
 
         }
@@ -48,7 +47,7 @@ public class ModRenderer {
 
         ShaderProgram shaderProgram = VeilRenderSystem.setShader(HALLUCINATIONS_SHADER);
         if (shaderProgram == null) {
-            Aetheric.LOGGER.debug("ShaderProgram you defined is null");
+            Aetheric.LOGGER.info("ShaderProgram you defined is null");
             return;
         }
 
