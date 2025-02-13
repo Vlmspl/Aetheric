@@ -65,6 +65,8 @@ public class ModRenderer {
 
         fbo.bind(true);
         shaderProgram.bind();
+        shaderProgram.setDefaultUniforms(VertexFormat.Mode.TRIANGLES);
+        shaderProgram.bindSamplers(0);
         hallucinationsArray.bind();
 
 
