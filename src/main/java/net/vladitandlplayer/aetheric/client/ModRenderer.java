@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.resources.ResourceLocation;
 import net.vladitandlplayer.aetheric.Aetheric;
+import net.vladitandlplayer.aetheric.AethericClient;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Matrix4fc;
@@ -27,8 +28,8 @@ import static org.lwjgl.opengl.GL11C.*;
 
 @Environment(EnvType.CLIENT)
 public class ModRenderer {
-    private static final ResourceLocation HALLUCINATION_FBO = Aetheric.path("hallucination");
-    private static final ResourceLocation HALLUCINATIONS_SHADER = Aetheric.path("hallucinations");
+    private static final ResourceLocation HALLUCINATION_FBO = AethericClient.path("hallucination");
+    private static final ResourceLocation HALLUCINATIONS_SHADER = AethericClient.path("hallucinations");
     private static VertexArray hallucinationsArray;
 
     public static void renderHallucinations(LevelRenderer levelRenderer,
@@ -37,11 +38,7 @@ public class ModRenderer {
                                             Matrix4fc frustumMatrix,
                                             Matrix4fc projectionMatrix,
                                             Camera camera) {
-        if (VeilLevelPerspectiveRenderer.isRenderingPerspective() || !projectionMatrix.isFinite()) {
-            Aetheric.LOGGER.info("not rendering perspective or projection is infinite");
-            return;
 
-        }
 
         AdvancedFbo fbo = VeilRenderSystem.renderer().getFramebufferManager().getFramebuffer(HALLUCINATION_FBO);
 
